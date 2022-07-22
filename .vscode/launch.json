@@ -1,0 +1,12 @@
+{
+  "configurations": [
+    {
+      "name": "Launch Program",
+      "program": "${workspaceFolder}/dist/server.js",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "preLaunchTask": "npm: build"
+    }
+  ]
+}
