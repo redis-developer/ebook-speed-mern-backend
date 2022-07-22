@@ -55,3 +55,7 @@ npm dependencies and build scripts
 ## tsconfig.json
 
 Config settings for compiling server code written in TypeScript
+
+## dependencies.ts
+
+All external npm package dependencies

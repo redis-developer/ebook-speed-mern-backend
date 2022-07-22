@@ -1,7 +1,7 @@
-import express, { Request, Response } from "express";
+import type { Request, Response } from "../dependencies";
+import { express } from "../dependencies";
 
 const router = express.Router();
-
 
 router.get("/", (req: Request, res: Response) => {
   res.send("Request Specific API endpoint!");
