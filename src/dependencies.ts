@@ -11,6 +11,21 @@ import {
     InsertOneOptions, UpdateOptions, UpdateResult, BulkWriteOptions, InsertManyResult
 } from "mongodb";
 
+import {
+    merge,
+    isEqual,
+    has, isArray,
+    set
+} from "lodash";
+
+
+const lodashGroup = {
+    merge,
+    isEqual,
+    has, isArray,
+    set
+};
+
 
 type CstObjectIdType = ObjectId | string | number;
 
@@ -19,6 +34,7 @@ export {
     express,
     dotenv,
     MongoClient, ObjectId,
+    lodashGroup
 };
 
 export type {

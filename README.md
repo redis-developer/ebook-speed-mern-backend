@@ -4,7 +4,7 @@ Speed your MERN app by REDIS
 
 ## Config
 
-Please add "redis" and "mongodb" server connection string in the .env file
+Please create .env file at root and add appropriate "redis" and "mongodb" server connection string details
 
 ```js
 //consider sample

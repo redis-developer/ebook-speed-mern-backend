@@ -81,7 +81,7 @@ class NodeMongoWrapperCls {
                     _projection = {};
                 }
                 if (!_limit) {
-                    _limit = 50;
+                    _limit = 100;
                 }
                 if (!_sort) {
                     _sort = {};
