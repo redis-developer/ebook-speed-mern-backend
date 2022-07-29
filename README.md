@@ -14,11 +14,21 @@ MONGODB_DB_NAME=dbSpeedMernDemo
 REDIS_URL=127.0.0.1:6379
 ```
 
-## Run project locally
+# Install packages
 
 ```sh
 npm install
+```
 
+## Seed movies data
+
+```sh
+npm run data
+```
+
+## Run project locally
+
+```sh
 npm start
 ```
 

@@ -2,6 +2,9 @@ import express, { Express, Request, Response } from "express";
 
 import dotenv from "dotenv";
 
+import { Seeder } from "mongo-seeding";
+
+import path from "path";
 
 import {
     MongoClient, ObjectId,
@@ -34,7 +37,9 @@ export {
     express,
     dotenv,
     MongoClient, ObjectId,
-    lodashGroup
+    lodashGroup,
+    Seeder,
+    path
 };
 
 export type {
