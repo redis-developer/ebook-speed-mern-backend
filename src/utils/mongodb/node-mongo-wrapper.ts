@@ -419,3 +419,7 @@ export {
     setMongodb,
     getMongodb
 };
+
+export type {
+    NodeMongoWrapperCls
+};

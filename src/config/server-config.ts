@@ -12,8 +12,30 @@ const getServerConfig = () => {
         },
         seeder: {
             collectionsPath: "./data/collections"
+        },
+        indexer: [{
+            collectionName: "movies",
+            indexName: "index_movies_quick_text_search",
+            indexKey: { //only one text index per collection (MongoDB limitation)
+                "title": "text",
+                "tagline": "text",
+                "plot": "text",
+                "imdbVotes.low": 1 //for sort
+            }
+        },
+        {
+            collectionName: "movies",
+            indexName: "index_movies_basic_search",
+            indexKey: {
+                "imdbRating": 1,
+                "languages": 1, //only one array field can be indexed (MongoDB limitation)
+                // "countries": 1,
+                "year.low": 1,
+                "title": 1,
+                "imdbVotes.low": 1 //for sort
+            }
         }
-
+        ]
     };
 };
 

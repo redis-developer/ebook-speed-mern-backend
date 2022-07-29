@@ -1,10 +1,9 @@
-import { Seeder, dotenv, path } from "../src/dependencies";
+import { Seeder, path } from "../src/dependencies";
 
 import { getServerConfig } from "../src/config/server-config";
 
 import { LoggerCls } from "../src/utils/logger";
 
-dotenv.config();
 const SERVER_CONFIG = getServerConfig();
 
 const seedDatabase = () => {
@@ -35,6 +34,5 @@ export {
 };
 
 
-//insert masterCategories countries, languages
 
 
