@@ -57,6 +57,8 @@ interface IParamsUpdateDocumentById {
     document: CstDocumentType;
     updatedBy: string;
     session?: ClientSession;
+    isReplaceFlatArray?: boolean;
+    flatArrayProps?: CstDocumentType;
 }
 
 interface IParamsInsertManyDocuments {

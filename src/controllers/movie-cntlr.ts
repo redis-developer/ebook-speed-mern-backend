@@ -1,8 +1,13 @@
+import type {
+    CstObjectIdType,
+} from "../dependencies";
+
 import { yup } from "../dependencies";
 import { IMovie } from "../models/movie-mdl";
 import { COLLECTIONS } from "../config/server-config";
 
 import { GenericDatabaseCls } from "../utils/mongodb/generic-database";
+import { YupCls } from "../utils/yup";
 
 class MovieController {
 
@@ -22,24 +27,7 @@ class MovieController {
         });
 
         //@ts-ignore 
-        //validate & remove unknown properties
-        _movie = await schema
-            .validate(_movie, {
-                strict: false,
-                stripUnknown: true
-            })
-            .catch((err) => {
-                if (err) {
-                    const trimmedError = {
-                        name: err.name,
-                        details: err.errors
-                    };
-                    throw trimmedError;
-                }
-            });
-
-        //@ts-ignore
-        _movie = schema.cast(_movie); //string to date/ number..etc safe type casting
+        _movie = await YupCls.validateSchema(_movie, schema);
 
         return _movie;
     }
@@ -63,6 +51,60 @@ class MovieController {
         }
 
         return insertedId;
+    }
+
+
+    static async validateUpdateMovieSchema(_movie: IMovie): Promise<IMovie> {
+        const schema = yup.object().shape({
+            movieId: yup.string().required(),
+
+            title: yup.string(),
+            tagline: yup.string(),
+            plot: yup.string(),
+
+            url: yup.string().url(),
+            released: yup.date(),
+            duration: yup.number(),
+
+            languages: yup.array().of(yup.string()).min(1),
+            countries: yup.array().of(yup.string()).min(1)
+
+        });
+
+        //@ts-ignore 
+        _movie = await YupCls.validateSchema(_movie, schema);
+
+        return _movie;
+    }
+
+    static async updateMovie(_movie: IMovie, _userId: string): Promise<CstObjectIdType> {
+        let updatedId: CstObjectIdType = "";
+        const collectionName = COLLECTIONS.MOVIES.collectionName;
+        const keyName = COLLECTIONS.MOVIES.keyName;
+
+        if (_movie && _movie[keyName]) {
+            const id = _movie[keyName];
+
+            _movie = await MovieController.validateUpdateMovieSchema(_movie);
+
+            updatedId = await GenericDatabaseCls.updateDocumentById({
+                id: id,
+                collectionName: collectionName,
+                keyName: keyName,
+                document: _movie,
+                updatedBy: _userId,
+
+                isReplaceFlatArray: true,
+                flatArrayProps: {
+                    languages: 1,
+                    countries: 1
+                }
+            });
+
+
+        }
+
+        return updatedId;
     }
 }
 
