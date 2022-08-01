@@ -14,6 +14,8 @@ import {
     InsertOneOptions, UpdateOptions, UpdateResult, BulkWriteOptions, InsertManyResult
 } from "mongodb";
 
+import * as yup from "yup";
+
 import {
     merge,
     isEqual,
@@ -39,7 +41,8 @@ export {
     MongoClient, ObjectId,
     lodashGroup,
     Seeder,
-    path
+    path,
+    yup
 };
 
 export type {

@@ -24,6 +24,9 @@ interface ICommonFields {
     lastUpdatedOn?: string | Date | null;
     lastUpdatedBy?: string | null;
     statusCode?: DB_ROW_STATUS;
+    others?: { //optional dynamic other fields
+        [k: string]: unknown;
+    };
     [k: string]: unknown;
 }
 

@@ -1,3 +1,10 @@
+const COLLECTIONS = {
+    MOVIES: {
+        collectionName: "movies",
+        keyName: "movieId"
+    }
+};
+
 const getServerConfig = () => {
     const dbName = process.env.MONGODB_DB_NAME || "dbSpeedMernDemo";
 
@@ -14,7 +21,14 @@ const getServerConfig = () => {
             collectionsPath: "./data/collections"
         },
         indexer: [{
-            collectionName: "movies",
+            collectionName: COLLECTIONS.MOVIES.collectionName,
+            indexName: "index_movie_id",
+            indexKey: {
+                "movieId": "string"
+            }
+        },
+        {
+            collectionName: COLLECTIONS.MOVIES.collectionName,
             indexName: "index_movies_quick_text_search",
             indexKey: { //only one text index per collection (MongoDB limitation)
                 "title": "text",
@@ -24,7 +38,7 @@ const getServerConfig = () => {
             }
         },
         {
-            collectionName: "movies",
+            collectionName: COLLECTIONS.MOVIES.collectionName,
             indexName: "index_movies_basic_search",
             indexKey: {
                 "imdbRating": 1,
@@ -42,5 +56,6 @@ const getServerConfig = () => {
 
 export {
     getServerConfig,
+    COLLECTIONS
 };
 

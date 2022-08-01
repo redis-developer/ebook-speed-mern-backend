@@ -20,7 +20,10 @@ class DateCls {
             for (const key in _obj) {
                 const checkVal = _obj[key];
                 if (typeof (checkVal) == "string") {
-                    _obj[key] = DateCls.convertISOStringToDate(checkVal);
+                    const retVal = DateCls.convertISOStringToDate(checkVal);
+                    if (retVal) {
+                        _obj[key] = retVal;
+                    }
                 } else if (Array.isArray(checkVal)) {
                     for (const arrObj of checkVal) {
                         DateCls.convertNestedISOStringToDate(arrObj);

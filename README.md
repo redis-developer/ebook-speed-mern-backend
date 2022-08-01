@@ -20,7 +20,7 @@ REDIS_URL=127.0.0.1:6379
 npm install
 ```
 
-## Seed movies data
+## Seed & index movies data (MongoDB)
 
 ```sh
 npm run data
