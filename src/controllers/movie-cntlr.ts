@@ -1,5 +1,6 @@
 import type {
     CstObjectIdType,
+    Document
 } from "../dependencies";
 
 import { yup } from "../dependencies";
@@ -105,6 +106,63 @@ class MovieController {
         }
 
         return updatedId;
+    }
+
+    static async getMoviesByText(_doc: Document): Promise<Document[]> {
+        let movieList: Document[] = [];
+        const collectionName = COLLECTIONS.MOVIES.collectionName;
+
+        if (_doc && _doc.searchText) {
+
+            const pipelineArr = [
+                {
+                    "$search": { //$search must be the first stage in a pipeline
+                        "index": COLLECTIONS.MOVIES.Indexes.INDEX_MOVIES_QUICK_TEXT_SEARCH,
+                        "text": {
+                            "query": _doc.searchText,
+                            "path": ["plot", "tagline", "title"], //The multi path option is for type string only.
+                            // "path": {
+                            //     "wildcard": "*"
+                            // }
+                        }
+                    }
+                },
+                {
+                    "$match": {
+                        "statusCode": { $gt: 0 }
+                    }
+                },
+                {
+                    "$sort": {
+                        "imdbVotes.low": -1
+                    }
+                },
+                {
+                    "$project": {
+                        "movieId": 1,
+                        "title": 1,
+                        "tagline": 1,
+                        "plot": 1,
+                        "url": 1,
+                        "released": 1,
+                        "duration": 1,
+                        "languages": 1,
+                        "countries": 1
+                    }
+                }
+            ];
+            movieList = await GenericDatabaseCls.aggregate({
+                collectionName: collectionName,
+                pipelineArr: pipelineArr,
+                isInitializePipelineArr: false
+            });
+
+        }
+        else {
+            throw "searchText is mandatory!";
+        }
+
+        return movieList;
     }
 }
 

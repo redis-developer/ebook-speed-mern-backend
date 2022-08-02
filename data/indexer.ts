@@ -1,3 +1,5 @@
+/**
+//For MongoDB Community
 import type { Document } from "../src/dependencies";
 import type { NodeMongoWrapperCls } from "../src/utils/mongodb/node-mongo-wrapper";
 
@@ -33,6 +35,7 @@ const createAllIndexes = async () => {
     await setMongodb(SERVER_CONFIG.mongoDb.connectionUrl, SERVER_CONFIG.mongoDb.dbName);
     const mongodbWrapperInst = getMongodb();
 
+   
     const indexerDetails = SERVER_CONFIG.indexer;
     for (const detail of indexerDetails) {
         await createCollectionIndex(detail.collectionName, detail.indexName, detail.indexKey, mongodbWrapperInst);
@@ -46,3 +49,39 @@ const createAllIndexes = async () => {
 export {
     createAllIndexes
 };
+ */
+
+/**
+    *  SERVER_CONFIG.indexer = [{
+           collectionName: COLLECTIONS.MOVIES.collectionName,
+           indexName: "index_movie_id",
+           indexKey: {
+               "movieId": 1
+           }
+       },
+       {
+           collectionName: COLLECTIONS.MOVIES.collectionName,
+           indexName: "index_movies_quick_text_search",
+           indexKey: { //only one text index per collection (MongoDB limitation)
+               "statusCode": 1,
+               "title": "text",
+               "tagline": "text",
+               "plot": "text",
+               "imdbVotes.low": 1 //for sort
+           }
+       },
+       {
+           collectionName: COLLECTIONS.MOVIES.collectionName,
+           indexName: "index_movies_basic_search",
+           indexKey: {
+               "statusCode": 1,
+               "imdbRating": 1,
+               "languages": 1, //only one array field can be indexed (MongoDB limitation)
+               // "countries": 1,
+               "year.low": 1,
+               "title": 1,
+               "imdbVotes.low": 1 //for sort
+           }
+       }
+       ]
+    */

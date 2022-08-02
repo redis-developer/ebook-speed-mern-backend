@@ -140,6 +140,11 @@ const masterCategories = [
         name: "3 hours"
     }
 ];
+
+for (const item of masterCategories) {
+    item.statusCode = 1;
+}
+
 module.exports = masterCategories;
 
 

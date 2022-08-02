@@ -1,7 +1,12 @@
 const COLLECTIONS = {
     MOVIES: {
         collectionName: "movies",
-        keyName: "movieId"
+        keyName: "movieId",
+        Indexes: {
+            INDEX_MOVIE_ID: "index_movie_id",
+            INDEX_MOVIES_QUICK_TEXT_SEARCH: "index_movies_quick_text_search",
+            INDEX_MOVIES_BASIC_SEARCH: "index_movies_basic_search"
+        }
     }
 };
 
@@ -19,37 +24,7 @@ const getServerConfig = () => {
         },
         seeder: {
             collectionsPath: "./data/collections"
-        },
-        indexer: [{
-            collectionName: COLLECTIONS.MOVIES.collectionName,
-            indexName: "index_movie_id",
-            indexKey: {
-                "movieId": "string"
-            }
-        },
-        {
-            collectionName: COLLECTIONS.MOVIES.collectionName,
-            indexName: "index_movies_quick_text_search",
-            indexKey: { //only one text index per collection (MongoDB limitation)
-                "title": "text",
-                "tagline": "text",
-                "plot": "text",
-                "imdbVotes.low": 1 //for sort
-            }
-        },
-        {
-            collectionName: COLLECTIONS.MOVIES.collectionName,
-            indexName: "index_movies_basic_search",
-            indexKey: {
-                "imdbRating": 1,
-                "languages": 1, //only one array field can be indexed (MongoDB limitation)
-                // "countries": 1,
-                "year.low": 1,
-                "title": 1,
-                "imdbVotes.low": 1 //for sort
-            }
         }
-        ]
     };
 };
 

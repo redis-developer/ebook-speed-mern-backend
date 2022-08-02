@@ -1,15 +1,12 @@
 import { dotenv } from "../src/dependencies";
-
 import { seedDatabase } from "./seeder";
-import { createAllIndexes } from "./indexer";
-
 
 dotenv.config();
 
-const seedAndIndexData = async () => {
+const seedData = async () => {
     await seedDatabase();
-    await createAllIndexes();
+    //use atlas UI to index data
 };
 
 
-seedAndIndexData();
+seedData();

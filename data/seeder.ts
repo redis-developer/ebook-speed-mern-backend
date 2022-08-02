@@ -4,9 +4,10 @@ import { getServerConfig } from "../src/config/server-config";
 
 import { LoggerCls } from "../src/utils/logger";
 
-const SERVER_CONFIG = getServerConfig();
 
 const seedDatabase = () => {
+    const SERVER_CONFIG = getServerConfig();
+
     const config = {
         database: SERVER_CONFIG.mongoDb.connectionUrl,
         dropCollections: true //drop collection before insert

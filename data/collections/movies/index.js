@@ -1358,4 +1358,8 @@ const movies = [
   },
 ];
 
+for (const item of movies) {
+  item.statusCode = 1;
+}
+
 module.exports = movies;

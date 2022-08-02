@@ -3,7 +3,7 @@ import type {
     CstObjectIdType,
 } from "../../dependencies";
 import type {
-    CstDocumentType, IParamsInsertDocument, IParamsGetDocuments, IParamsUpdateDocumentById, IParamsInsertManyDocuments
+    CstDocumentType, IParamsInsertDocument, IParamsGetDocuments, IParamsUpdateDocumentById, IParamsInsertManyDocuments, IParamsAggregate
 } from "./generic-database.types";
 
 import {
@@ -350,6 +350,37 @@ class GenericDatabaseCls {
             throw err;
         });
 
+        return promObj;
+    }
+
+    static aggregate(_params: IParamsAggregate): Promise<Document[]> {
+        const mongodbWrapperInst = getMongodb();
+
+        let promObj: Promise<Document[]> = new Promise((resolve, reject) => {
+            if (_params.collectionName && _params.pipelineArr && _params.pipelineArr.length) {
+                let pipelineArr: Document[] = [];
+
+                if (_params.isInitializePipelineArr) {
+                    pipelineArr = [
+                        {
+                            $match: {
+                                statusCode: { $gt: 0 }
+                            }
+                        }
+                    ];
+                }
+
+                pipelineArr = pipelineArr.concat(_params.pipelineArr);
+                const promObj2 = mongodbWrapperInst.aggregate(_params.collectionName, pipelineArr);
+                resolve(promObj2);
+            } else {
+                reject("Input params validation failed!");
+            }
+        });
+        promObj = promObj.catch((err) => {
+            LoggerCls.error("generic-database aggregate()", err);
+            throw err;
+        });
         return promObj;
     }
 

@@ -70,6 +70,12 @@ interface IParamsInsertManyDocuments {
     session?: ClientSession;
 }
 
+interface IParamsAggregate {
+    collectionName: string;
+    pipelineArr: Document[];
+    isInitializePipelineArr: boolean;
+}
+
 export {
     DB_ROW_STATUS,
     DEFAULT_LIMIT,
@@ -79,5 +85,6 @@ export {
     IParamsInsertDocument,
     IParamsGetDocuments,
     IParamsUpdateDocumentById,
-    IParamsInsertManyDocuments
+    IParamsInsertManyDocuments,
+    IParamsAggregate
 };

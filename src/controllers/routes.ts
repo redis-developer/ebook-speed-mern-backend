@@ -64,14 +64,24 @@ router.post("/updateMovie", async (req: Request, res: Response) => {
 });
 
 //--------------------------------
-router.post("/getMoviesByText", (req: Request, res: Response) => {
+router.post("/getMoviesByText", async (req: Request, res: Response) => {
   const body = req.body;
-  const params = req.query;
+  const result: IApiResponseBody = {
+    data: null,
+    error: null
+  };
 
-  res.send({
-    body: body,
-    params: params
-  });
+  try {
+    result.data = await MovieController.getMoviesByText(body);
+  }
+  catch (err) {
+    const pureErr = getPureError(err);
+    result.error = pureErr;
+    res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+    LoggerCls.error("/getMoviesByText API failed !", pureErr);
+  }
+
+  res.send(result);
 });
 //--------------------------------
 router.post("/getMoviesByBasicFilters", (req: Request, res: Response) => {
