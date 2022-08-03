@@ -2,22 +2,9 @@
 
 Create following indexes in MongoDB Atlas
 
-### Index 1 (For movie update)
+### Index 1 (For text search)
 
-```json
-{
-  "mappings": {
-    "dynamic": false,
-    "fields": {
-      "movieId": {
-        "type": "string"
-      }
-    }
-  }
-}
-```
-
-### Index 2 (For text search)
+- index name: **index_movies_quick_text_search**
 
 ```json
 {
@@ -35,16 +22,15 @@ Create following indexes in MongoDB Atlas
       },
       "plot": {
         "type": "string"
-      },
-      "imdbVotes.low": {
-        "type": "number"
       }
     }
   }
 }
 ```
 
-### Index 3 (For basic form search)
+### Index 2 (basic form search)
+
+- index name: **index_movies_basic_search**
 
 ```json
 {
@@ -57,20 +43,20 @@ Create following indexes in MongoDB Atlas
       "imdbRating": {
         "type": "number"
       },
-      "languages": {
-        "type": "string"
-      },
       "countries": {
         "type": "string"
       },
-      "year.low": {
-        "type": "number"
+      "year": {
+        "type": "document",
+        "dynamic": false,
+        "fields": {
+          "low": {
+            "type": "number"
+          }
+        }
       },
       "title": {
         "type": "string"
-      },
-      "imdbVotes.low": {
-        "type": "number"
       }
     }
   }

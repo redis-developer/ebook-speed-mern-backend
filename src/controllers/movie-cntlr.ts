@@ -41,6 +41,13 @@ class MovieController {
         if (_movie) {
             _movie = await MovieController.validateInsertMovieSchema(_movie);
 
+            if (_movie.released && _movie.released instanceof Date) {
+                _movie.year = {
+                    low: _movie.released.getFullYear(),
+                    high: 0
+                };
+            }
+
             insertedId = await GenericDatabaseCls.insertDocument({
                 collectionName: collectionName,
                 keyName: keyName,
@@ -108,46 +115,45 @@ class MovieController {
         return updatedId;
     }
 
-    static async getMoviesByText(_doc: Document): Promise<Document[]> {
+    static async getMoviesByText(_filter: Document): Promise<Document[]> {
         let movieList: Document[] = [];
         const collectionName = COLLECTIONS.MOVIES.collectionName;
 
-        if (_doc && _doc.searchText) {
+        if (_filter && _filter.searchText) {
 
             const pipelineArr = [
                 {
-                    "$search": { //$search must be the first stage in a pipeline
-                        "index": COLLECTIONS.MOVIES.Indexes.INDEX_MOVIES_QUICK_TEXT_SEARCH,
-                        "text": {
-                            "query": _doc.searchText,
-                            "path": ["plot", "tagline", "title"], //The multi path option is for type string only.
-                            // "path": {
-                            //     "wildcard": "*"
-                            // }
-                        }
-                    }
+                    $search: {
+                        index: COLLECTIONS.MOVIES.Indexes.INDEX_MOVIES_QUICK_TEXT_SEARCH,
+                        compound: {
+                            must: [
+                                {
+                                    range: {
+                                        gt: 0,
+                                        path: "statusCode",
+                                    },
+                                },
+                                {
+                                    text: {
+                                        query: _filter.searchText,
+                                        path: ["title", "tagline", "plot"],
+                                    },
+                                }
+                            ],
+                        },
+                    },
                 },
                 {
-                    "$match": {
-                        "statusCode": { $gt: 0 }
-                    }
-                },
-                {
-                    "$sort": {
-                        "imdbVotes.low": -1
-                    }
-                },
-                {
-                    "$project": {
-                        "movieId": 1,
-                        "title": 1,
-                        "tagline": 1,
-                        "plot": 1,
-                        "url": 1,
-                        "released": 1,
-                        "duration": 1,
-                        "languages": 1,
-                        "countries": 1
+                    $project: {
+                        movieId: 1,
+                        title: 1,
+                        tagline: 1,
+                        plot: 1,
+                        url: 1,
+                        released: 1,
+                        duration: 1,
+                        languages: 1,
+                        countries: 1
                     }
                 }
             ];
@@ -160,6 +166,114 @@ class MovieController {
         }
         else {
             throw "searchText is mandatory!";
+        }
+
+        return movieList;
+    }
+
+    static async validateBasicFiltersSchema(_filter: Document): Promise<Document> {
+        const schema = yup.object().shape({
+            imdbRating: yup.number(),
+            countries: yup.array().of(yup.string()).min(1),
+            releaseYear: yup.number(),
+            title: yup.string()
+        });
+
+        //@ts-ignore 
+        _filter = await YupCls.validateSchema(_filter, schema);
+
+        return _filter;
+    }
+    static buildBasicFiltersQuery(_filter: Document): Document[] {
+        const compoundQueries: Document[] = [{
+            range: {
+                gt: 0,
+                path: "statusCode",
+            },
+        }];
+
+        if (_filter) {
+
+            if (_filter.imdbRating >= 0) {
+                compoundQueries.push({
+                    range: {
+                        gte: _filter.imdbRating,
+                        path: "imdbRating",
+                    },
+                });
+            }
+
+
+            if (_filter.countries && _filter.countries.length) {
+                compoundQueries.push({
+                    text: {
+                        query: _filter.countries,
+                        path: "countries",
+                    },
+                });
+            }
+
+            if (_filter.releaseYear >= 0) {
+                compoundQueries.push({
+                    range: {
+                        gte: _filter.releaseYear,
+                        lte: _filter.releaseYear, //no eq in range
+                        path: "year.low",
+                    },
+                });
+            }
+
+            if (_filter.title) {
+                compoundQueries.push({
+                    text: {
+                        query: _filter.title,
+                        path: "title",
+                    },
+                });
+            }
+        }
+
+        return compoundQueries;
+    }
+    static async getMoviesByBasicFilters(_filter: Document): Promise<Document[]> {
+        let movieList: Document[] = [];
+        const collectionName = COLLECTIONS.MOVIES.collectionName;
+
+        if (_filter && Object.keys(_filter).length) {
+            _filter = await MovieController.validateBasicFiltersSchema(_filter);
+            const compoundQueries = MovieController.buildBasicFiltersQuery(_filter);
+            const pipelineArr = [
+                {
+                    $search: {
+                        index: COLLECTIONS.MOVIES.Indexes.INDEX_MOVIES_BASIC_SEARCH,
+                        compound: {
+                            must: compoundQueries,
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        movieId: 1,
+                        title: 1,
+                        tagline: 1,
+                        plot: 1,
+                        url: 1,
+                        released: 1,
+                        duration: 1,
+                        languages: 1,
+                        countries: 1
+                    }
+                }
+            ];
+            movieList = await GenericDatabaseCls.aggregate({
+                collectionName: collectionName,
+                pipelineArr: pipelineArr,
+                isInitializePipelineArr: false
+            });
+
+        }
+        else {
+            throw "Filter by one key at least is mandatory!";
         }
 
         return movieList;

@@ -3,7 +3,6 @@ const COLLECTIONS = {
         collectionName: "movies",
         keyName: "movieId",
         Indexes: {
-            INDEX_MOVIE_ID: "index_movie_id",
             INDEX_MOVIES_QUICK_TEXT_SEARCH: "index_movies_quick_text_search",
             INDEX_MOVIES_BASIC_SEARCH: "index_movies_basic_search"
         }
