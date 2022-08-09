@@ -1,3 +1,6 @@
+/**
+ * This file contains all npm/ 3rd party dependencies
+ */
 import express, { Express, Request, Response } from "express";
 
 import dotenv from "dotenv";

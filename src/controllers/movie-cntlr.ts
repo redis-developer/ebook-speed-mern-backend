@@ -57,6 +57,9 @@ class MovieController {
 
 
         }
+        else {
+            throw "Movie data is mandatory!";
+        }
 
         return insertedId;
     }
@@ -110,6 +113,9 @@ class MovieController {
             });
 
 
+        }
+        else {
+            throw "Movie data & id is mandatory!";
         }
 
         return updatedId;
@@ -273,7 +279,7 @@ class MovieController {
 
         }
         else {
-            throw "Filter by one key at least is mandatory!";
+            throw "At least one key to filter is mandatory!";
         }
 
         return movieList;

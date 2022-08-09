@@ -73,7 +73,7 @@ Steps to create index in Atlas
 - Choose "JSON editor"
   ![choose-json-editor](./images/02-choose-json-editor.png)
 
-- Choose collection, provide index name & index json configuration
+- Choose collection, specify index name & index json configuration
   ![sample-index](./images/03-sample-index.png)
 
 - Review & create

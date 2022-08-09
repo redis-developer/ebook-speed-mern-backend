@@ -390,7 +390,7 @@ class NodeMongoWrapperCls {
                         reject(err);
                     });
             } else {
-                reject("aggregate Input params validation failed!");
+                reject("Input params validation failed!");
             }
         });
         promObj = promObj.catch((err) => {

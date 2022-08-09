@@ -12,6 +12,10 @@ Contains the distributable (or output) from your TypeScript build.
 
 documentation
 
+## data
+
+sample movies data to seed database
+
 ## src
 
 Contains your source code that will be compiled to the dist dir

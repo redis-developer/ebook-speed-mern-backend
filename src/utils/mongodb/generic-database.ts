@@ -61,6 +61,70 @@ class GenericDatabaseCls {
         return _document;
     }
 
+    static deleteArrayPropsForReplace(_deleteArrayProps: CstDocumentType, _document: CstDocumentType, _originalDocument: CstDocumentType): CstDocumentType {
+
+        /** Example
+           this function is used for string/ number arrays where lodash "by index merging" doesn't suit during update operation 
+ 
+           const _deleteArrayProps = {
+            languages: 1,
+            countries: 1,
+            department: {
+                actor: {
+                    leadRoles: 1
+                }
+            }
+        };
+
+        const _document = {
+            title: "Toy Story",
+            languages: ["HINDI"], //will be deleted on _originalDocument
+            department: {
+                actor: {
+                    leadRoles: ["A", "B", "C"]  //will be deleted on _originalDocument
+                }
+            }
+        };
+
+        const _originalDocument = {
+            title: "RRR ",
+            languages: ["ENGLISH", "SPANISH"], //will be deleted
+            countries: ["USA"],
+            department: {
+                actor: {
+                    leadRoles: ["H", "I", "K", "K"], //will be deleted
+                    budget: 10000
+                }
+            }
+        };
+ 
+          _output = { //modified _originalDocument
+              title: "RRR ",
+              countries: ["USA"],
+              department:{
+                 actor:{
+                    budget:10000
+                 }
+              }
+          }
+         */
+
+        if (_document && _originalDocument && _deleteArrayProps) {
+            for (const key in _deleteArrayProps) {
+                if (typeof _deleteArrayProps[key] == "object") {
+                    GenericDatabaseCls.deleteArrayPropsForReplace(_deleteArrayProps[key], _document[key], _originalDocument[key]);
+                }
+                else {
+                    if (_document[key] && _document[key] instanceof Array
+                        && _originalDocument[key] && _originalDocument[key] instanceof Array) {
+                        delete _originalDocument[key];
+                    }
+                }
+            }
+        }
+        return _originalDocument;
+    }
+
     //#endregion utils
 
 
@@ -157,70 +221,6 @@ class GenericDatabaseCls {
         return promObj;
     }
 
-    static deleteArrayPropsForReplace(_deleteArrayProps: CstDocumentType, _document: CstDocumentType, _originalDocument: CstDocumentType): CstDocumentType {
-
-        /**
-          // for string/ number arrays - if lodash by index merge doesn't suit
- 
-           const _deleteArrayProps = {
-            languages: 1,
-            countries: 1,
-            department: {
-                actor: {
-                    leadRoles: 1
-                }
-            }
-        };
-
-        const _document = {
-            title: "Toy Story",
-            languages: ["HINDI"], //will be deleted on _originalDocument
-            department: {
-                actor: {
-                    leadRoles: ["A", "B", "C"]  //will be deleted on _originalDocument
-                }
-            }
-        };
-
-        const _originalDocument = {
-            title: "RRR ",
-            languages: ["ENGLISH", "SPANISH"], //will be deleted
-            countries: ["USA"],
-            department: {
-                actor: {
-                    leadRoles: ["H", "I", "K", "K"], //will be deleted
-                    budget: 10000
-                }
-            }
-        };
- 
-          _output = {
-              title: "RRR ",
-              countries: ["USA"],
-              department:{
-                 actor:{
-                    budget:10000
-                 }
-              }
-          }
-         */
-
-        if (_document && _originalDocument && _deleteArrayProps) {
-            for (const key in _deleteArrayProps) {
-                if (typeof _deleteArrayProps[key] == "object") {
-                    GenericDatabaseCls.deleteArrayPropsForReplace(_deleteArrayProps[key], _document[key], _originalDocument[key]);
-                }
-                else {
-                    if (_document[key] && _document[key] instanceof Array
-                        && _originalDocument[key] && _originalDocument[key] instanceof Array) {
-                        delete _originalDocument[key];
-                    }
-                }
-            }
-        }
-        return _originalDocument;
-    }
-
     static updateDocumentById(_params: IParamsUpdateDocumentById): Promise<CstObjectIdType> {
         const mongodbWrapperInst = getMongodb();
 
@@ -245,7 +245,7 @@ class GenericDatabaseCls {
                     };
                 }
 
-                //skipping non updatable keys----------------------------
+                //deleting non updatable keys----------------------------
                 if (_params.document["_id"]) {
                     delete _params.document["_id"];
                 }
@@ -272,6 +272,7 @@ class GenericDatabaseCls {
                                 GenericDatabaseCls.deleteArrayPropsForReplace(_params.flatArrayProps, _params.document, originalDocument);
                             }
 
+                            //merge update patch with original
                             let modifiedDocument: Document = LodashCls.merge(originalDocument, _params.document);
 
                             modifiedDocument.lastUpdatedOn = new Date();
@@ -318,7 +319,7 @@ class GenericDatabaseCls {
 
 
         promObj = promObj.catch((err) => {
-            LoggerCls.error("generic-database updateDocument()", err);
+            LoggerCls.error("generic-database updateDocumentById()", err);
             throw err;
         });
 

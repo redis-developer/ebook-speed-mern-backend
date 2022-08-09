@@ -21,7 +21,7 @@ class YupCls {
                 });
 
             //@ts-ignore
-            _data = _schema.cast(_data); //string to date/ number..etc safe type casting
+            _data = _schema.cast(_data); //safe type casting like string to date/ number..etc 
         }
 
         return _data;

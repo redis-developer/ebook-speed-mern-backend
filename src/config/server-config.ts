@@ -2,7 +2,7 @@ const COLLECTIONS = {
     MOVIES: {
         collectionName: "movies",
         keyName: "movieId",
-        Indexes: {
+        Indexes: { //docs/indexing/mongodb-atlas.md
             INDEX_MOVIES_QUICK_TEXT_SEARCH: "index_movies_quick_text_search",
             INDEX_MOVIES_BASIC_SEARCH: "index_movies_basic_search"
         }
