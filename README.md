@@ -10,7 +10,7 @@ Please create **.env file** at root and add appropriate "redis" and "mongodb" se
 
 ```js
 //consider sample
-PORT=3000
+PORT=3001
 MONGODB_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/dbSpeedMernDemo?retryWrites=true&w=majority
 REDIS_URL=127.0.0.1:6379
 ```
@@ -45,6 +45,7 @@ npm start
 - [Update Movie](./docs/api/02-update-movie.md)
 - [Get Movies by Text](./docs/api/03-get-movies-by-text.md)
 - [Get Movies by Basic Filters](./docs/api/04-get-movies-by-basic-filters.md)
+- [Get Masters by Category](./docs/api/05-get-masters-by-category.md)
 
 ### Folder structure
 

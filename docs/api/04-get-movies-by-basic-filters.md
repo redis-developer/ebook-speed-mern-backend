@@ -3,7 +3,7 @@
 ## Request
 
 ```json
-POST localhost:3000/api/getMoviesByBasicFilters
+POST localhost:3001/api/getMoviesByBasicFilters
 {
     "imdbRating":1,
     "countries":["USA"],

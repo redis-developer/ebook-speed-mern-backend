@@ -6,7 +6,15 @@ const COLLECTIONS = {
             INDEX_MOVIES_QUICK_TEXT_SEARCH: "index_movies_quick_text_search",
             INDEX_MOVIES_BASIC_SEARCH: "index_movies_basic_search"
         }
-    }
+    },
+    MASTER_CATEGORIES: {
+        collectionName: "masterCategories",
+        keyName: "_id",
+        Indexes: { //docs/indexing/mongodb-atlas.md
+            INDEX_MASTER_CATEGORIES: "index_master_categories"
+        }
+    },
+
 };
 
 const getServerConfig = () => {
@@ -15,7 +23,7 @@ const getServerConfig = () => {
     return {
         httpServer: {
             apiPrefix: "/api",
-            port: process.env.PORT || 3000,
+            port: process.env.PORT || 3001,
         },
         mongoDb: {
             connectionUrl: process.env.MONGODB_URL || `mongodb://localhost:27017/${dbName}`,

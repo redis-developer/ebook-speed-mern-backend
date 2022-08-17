@@ -1,5 +1,5 @@
 import type { Express, Request, Response } from "./dependencies";
-import { express, dotenv } from "./dependencies";
+import { express, dotenv, cors } from "./dependencies";
 
 import { getServerConfig } from "./config/server-config";
 import { router } from "./controllers/routes";
@@ -10,6 +10,8 @@ const SERVER_CONFIG = getServerConfig();
 
 const app: Express = express();
 const port = SERVER_CONFIG.httpServer.port;
+
+app.use(cors());
 
 app.use(express.json());
 

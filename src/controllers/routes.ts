@@ -5,6 +5,7 @@ import { LoggerCls } from "../utils/logger";
 import { express } from "../dependencies";
 
 import { MovieController } from "./movie-cntlr";
+import { MasterController } from "./master-cntlr";
 
 const router = express.Router();
 const DEFAULT_USER_ID = "usrNodeJS";
@@ -103,6 +104,27 @@ router.post("/getMoviesByBasicFilters", async (req: Request, res: Response) => {
 
   res.send(result);
 });
+//--------------------------------
+router.post("/getMastersByCategory", async (req: Request, res: Response) => {
+  const body = req.body;
+  const result: IApiResponseBody = {
+    data: null,
+    error: null
+  };
+
+  try {
+    result.data = await MasterController.getMastersByCategory(body);
+  }
+  catch (err) {
+    const pureErr = getPureError(err);
+    result.error = pureErr;
+    res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+    LoggerCls.error("/getMastersByCategory API failed !", pureErr);
+  }
+
+  res.send(result);
+});
+
 //--------------------------------
 
 export {

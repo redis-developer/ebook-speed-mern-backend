@@ -125,9 +125,10 @@ class MovieController {
         let movieList: Document[] = [];
         const collectionName = COLLECTIONS.MOVIES.collectionName;
 
+        let pipelineArr: Document[] = [];
+        let isInitializePipelineArr = false;
         if (_filter && _filter.searchText) {
-
-            const pipelineArr = [
+            pipelineArr = [
                 {
                     $search: {
                         index: COLLECTIONS.MOVIES.Indexes.INDEX_MOVIES_QUICK_TEXT_SEARCH,
@@ -147,32 +148,41 @@ class MovieController {
                                 }
                             ],
                         },
-                    },
-                },
-                {
-                    $project: {
-                        movieId: 1,
-                        title: 1,
-                        tagline: 1,
-                        plot: 1,
-                        url: 1,
-                        released: 1,
-                        duration: 1,
-                        languages: 1,
-                        countries: 1
                     }
                 }
-            ];
-            movieList = await GenericDatabaseCls.aggregate({
-                collectionName: collectionName,
-                pipelineArr: pipelineArr,
-                isInitializePipelineArr: false
-            });
 
+            ];
         }
         else {
-            throw "searchText is mandatory!";
+            isInitializePipelineArr = true;
         }
+
+
+        pipelineArr.push({
+            $project: {
+                movieId: 1,
+                title: 1,
+                tagline: 1,
+                plot: 1,
+                url: 1,
+                poster: 1,
+                released: 1,
+                "year.low": 1,
+                duration: 1,
+                languages: 1,
+                countries: 1,
+                imdbRating: 1
+            }
+        });
+
+
+        movieList = await GenericDatabaseCls.aggregate({
+            collectionName: collectionName,
+            pipelineArr: pipelineArr,
+            isInitializePipelineArr: isInitializePipelineArr
+        });
+
+
 
         return movieList;
     }
@@ -264,10 +274,13 @@ class MovieController {
                         tagline: 1,
                         plot: 1,
                         url: 1,
+                        poster: 1,
                         released: 1,
+                        "year.low": 1,
                         duration: 1,
                         languages: 1,
-                        countries: 1
+                        countries: 1,
+                        imdbRating: 1
                     }
                 }
             ];

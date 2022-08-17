@@ -3,7 +3,7 @@
 ## Request
 
 ```json
-POST localhost:3000/api/updateMovie
+POST localhost:3001/api/updateMovie
 {
     "movieId":"62e7a394d93370f523bdfd7c", //mandatory primary key
 

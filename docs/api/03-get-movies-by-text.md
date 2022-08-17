@@ -3,9 +3,9 @@
 ## Request
 
 ```json
-POST localhost:3000/api/getMoviesByText
+POST localhost:3001/api/getMoviesByText
 {
-    "searchText":"doll"
+    "searchText":"doll" //empty to get all movies
 }
 ```
 

@@ -2,6 +2,7 @@
  * This file contains all npm/ 3rd party dependencies
  */
 import express, { Express, Request, Response } from "express";
+import cors from "cors";
 
 import dotenv from "dotenv";
 
@@ -40,6 +41,7 @@ type CstObjectIdType = ObjectId | string | number;
 
 export {
     express,
+    cors,
     dotenv,
     MongoClient, ObjectId,
     lodashGroup,

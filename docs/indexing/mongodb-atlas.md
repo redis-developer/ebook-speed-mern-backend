@@ -63,6 +63,26 @@ Create following indexes in MongoDB Atlas
 }
 ```
 
+### Index 3 (master categories for dropdown values)
+
+- index name: **index_master_categories**
+
+```json
+{
+  "mappings": {
+    "dynamic": false,
+    "fields": {
+      "statusCode": {
+        "type": "number"
+      },
+      "category": {
+        "type": "string"
+      }
+    }
+  }
+}
+```
+
 ## Screenshots
 
 Steps to create index in Atlas

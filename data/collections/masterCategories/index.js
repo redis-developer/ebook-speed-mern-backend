@@ -113,31 +113,6 @@ const masterCategories = [
         category: "LANGUAGE",
         code: "HINDI",
         name: "Hindi"
-    },
-    {
-        category: "MOVIE_DURATION",
-        code: "60",
-        name: "1 hour"
-    },
-    {
-        category: "MOVIE_DURATION",
-        code: "90",
-        name: "1 hour 30 min"
-    },
-    {
-        category: "MOVIE_DURATION",
-        code: "120",
-        name: "2 hours"
-    },
-    {
-        category: "MOVIE_DURATION",
-        code: "140",
-        name: "2 hours  20 min"
-    },
-    {
-        category: "MOVIE_DURATION",
-        code: "180",
-        name: "3 hours"
     }
 ];
 

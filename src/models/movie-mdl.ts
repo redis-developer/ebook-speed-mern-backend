@@ -57,7 +57,7 @@ const sample = {
 };
 */
 
-export {
+export type {
     IMovie
 };
 
