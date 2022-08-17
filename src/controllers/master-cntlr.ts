@@ -40,8 +40,9 @@ class MasterController {
 
         return compoundQueries;
     }
-    static async getMastersByCategory(_filter: Document): Promise<Document[]> {
-        let masterCategories: Document[] = [];
+    static async getMastersByCategory(_filter: Document): Promise<Document> {
+        const output: Document = {};
+
         const collectionName = COLLECTIONS.MASTER_CATEGORIES.collectionName;
 
         if (_filter && Object.keys(_filter).length) {
@@ -62,20 +63,33 @@ class MasterController {
                         code: 1,
                         name: 1
                     }
+                },
+                {
+                    $group: {
+                        _id: "$category",
+                        value: {
+                            $push: "$$ROOT"
+                        }
+                    }
                 }
             ];
-            masterCategories = await GenericDatabaseCls.aggregate({
+            const masterCategories = await GenericDatabaseCls.aggregate({
                 collectionName: collectionName,
                 pipelineArr: pipelineArr,
                 isInitializePipelineArr: false
             });
+
+            //convert array to key-value object
+            for (const masterCategory of masterCategories) {
+                output[masterCategory["_id"]] = masterCategory["value"];
+            }
 
         }
         else {
             throw "At least one key to filter is mandatory!";
         }
 
-        return masterCategories;
+        return output;
     }
 }
 
