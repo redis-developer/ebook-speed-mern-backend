@@ -15,12 +15,13 @@ class MovieController {
     static async validateInsertMovieSchema(_movie: IMovie): Promise<IMovie> {
         const schema = yup.object().shape({
             title: yup.string().required(),
-            tagline: yup.string().required(),
             plot: yup.string().required(),
 
             url: yup.string().url(),
+            poster: yup.string().url(),
             released: yup.date(),
             duration: yup.number(),
+            imdbRating: yup.number().required(),
 
             languages: yup.array().of(yup.string()).min(1),
             countries: yup.array().of(yup.string()).min(1)
@@ -33,8 +34,8 @@ class MovieController {
         return _movie;
     }
 
-    static async insertMovie(_movie: IMovie, _userId: string): Promise<string> {
-        let insertedId = "";
+    static async insertMovie(_movie: IMovie, _userId: string): Promise<Document> {
+        let insertedDoc: Document = {};
         const collectionName = COLLECTIONS.MOVIES.collectionName;
         const keyName = COLLECTIONS.MOVIES.keyName;
 
@@ -48,7 +49,7 @@ class MovieController {
                 };
             }
 
-            insertedId = await GenericDatabaseCls.insertDocument({
+            insertedDoc = await GenericDatabaseCls.insertDocument({
                 collectionName: collectionName,
                 keyName: keyName,
                 document: _movie,
@@ -61,7 +62,7 @@ class MovieController {
             throw "Movie data is mandatory!";
         }
 
-        return insertedId;
+        return insertedDoc;
     }
 
 
@@ -78,8 +79,9 @@ class MovieController {
             duration: yup.number(),
 
             languages: yup.array().of(yup.string()).min(1),
-            countries: yup.array().of(yup.string()).min(1)
+            countries: yup.array().of(yup.string()).min(1),
 
+            status: yup.number(),
         });
 
         //@ts-ignore 

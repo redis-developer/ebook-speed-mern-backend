@@ -1360,6 +1360,7 @@ const movies = [
 
 for (const item of movies) {
   item.statusCode = 1;
+  item._id = item.movieId;
 }
 
 module.exports = movies;

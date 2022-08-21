@@ -1,6 +1,6 @@
 import type {
     Filter, Document,
-    CstObjectIdType,
+    CstObjectIdType
 } from "../../dependencies";
 import type {
     CstDocumentType, IParamsInsertDocument, IParamsGetDocuments, IParamsUpdateDocumentById, IParamsInsertManyDocuments, IParamsAggregate
@@ -128,10 +128,10 @@ class GenericDatabaseCls {
     //#endregion utils
 
 
-    static insertDocument(_params: IParamsInsertDocument): Promise<string> {
+    static insertDocument(_params: IParamsInsertDocument): Promise<CstDocumentType> {
         const mongodbWrapperInst = getMongodb();
 
-        let promObj: Promise<string> = new Promise((resolve, reject) => {
+        let promObj: Promise<CstDocumentType> = new Promise((resolve, reject) => {
             if (_params.collectionName && _params.createdBy && _params.document && Object.keys(_params.document).length) {
 
                 _params.document = GenericDatabaseCls.addCommonFieldsToDocument(_params.document, _params.createdBy, false);
@@ -139,7 +139,11 @@ class GenericDatabaseCls {
                 _params.document = DateCls.convertNestedISOStringToDate(_params.document);
 
                 const promObj2 = mongodbWrapperInst.insertOne(_params.collectionName, _params.keyName, _params.document, _params.session);
-                resolve(promObj2);
+                const promObj3 = promObj2.then((_insertedId: string) => {
+                    _params.document[_params.keyName] = _insertedId;
+                    return _params.document;
+                });
+                resolve(promObj3);
 
             } else {
                 reject("Input params validation failed !");
@@ -232,7 +236,7 @@ class GenericDatabaseCls {
                 const filter: Filter<Document> = {};
 
                 if (_params.id) {
-                    filter["_id"] = GenericDatabaseCls.convertStringToObjectId(_params.id);
+                    filter[_params.keyName] = GenericDatabaseCls.convertStringToObjectId(_params.id);
                 }
 
                 let documentLastUpdatedOn = _params.document.lastUpdatedOn || null;
@@ -287,7 +291,7 @@ class GenericDatabaseCls {
 
                             const promObj2 = mongodbWrapperInst.updateOne(_params.collectionName, filter, updateProp, _params.session);
                             const promObj3: Promise<CstObjectIdType> = promObj2.then(() => {
-                                return modifiedDocument["_id"];
+                                return modifiedDocument[_params.keyName];
                             });
 
                             resolve(promObj3);
