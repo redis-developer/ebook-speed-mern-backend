@@ -17,7 +17,10 @@ POST localhost:3001/api/updateMovie
 
 ```json
 {
-  "data": "62e7a394d93370f523bdfd7c",
+ "data": {
+    "movieId": "62e7a394d93370f523bdfd7c"
+    //... all fields
+  }
   "error": null
 }
 ```

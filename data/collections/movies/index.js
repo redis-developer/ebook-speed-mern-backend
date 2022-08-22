@@ -1044,7 +1044,7 @@ const movies = [
     runtime: { low: 106, high: 0 },
     imdbRating: 6.9,
     movieId: "40",
-    countries: ["South Africa", "USA"],
+    countries: ["SouthAfrica", "USA"],
     imdbVotes: { low: 1399, high: 0 },
     title: "Cry, the Beloved Country",
     url: "https://themoviedb.org/movie/34615",

@@ -21,7 +21,7 @@ class MovieController {
             poster: yup.string().url(),
             released: yup.date(),
             duration: yup.number(),
-            imdbRating: yup.number().required(),
+            imdbRating: yup.number(),
 
             languages: yup.array().of(yup.string()).min(1),
             countries: yup.array().of(yup.string()).min(1)
@@ -71,17 +71,18 @@ class MovieController {
             movieId: yup.string().required(),
 
             title: yup.string(),
-            tagline: yup.string(),
             plot: yup.string(),
 
             url: yup.string().url(),
+            poster: yup.string().url(),
             released: yup.date(),
             duration: yup.number(),
+            imdbRating: yup.number(),
 
             languages: yup.array().of(yup.string()).min(1),
             countries: yup.array().of(yup.string()).min(1),
 
-            status: yup.number(),
+            statusCode: yup.number(),
         });
 
         //@ts-ignore 
@@ -90,8 +91,7 @@ class MovieController {
         return _movie;
     }
 
-    static async updateMovie(_movie: IMovie, _userId: string): Promise<CstObjectIdType> {
-        let updatedId: CstObjectIdType = "";
+    static async updateMovie(_movie: IMovie, _userId: string): Promise<IMovie> {
         const collectionName = COLLECTIONS.MOVIES.collectionName;
         const keyName = COLLECTIONS.MOVIES.keyName;
 
@@ -100,7 +100,16 @@ class MovieController {
 
             _movie = await MovieController.validateUpdateMovieSchema(_movie);
 
-            updatedId = await GenericDatabaseCls.updateDocumentById({
+            if (_movie.released) {
+                _movie.released = new Date(_movie.released);
+
+                _movie.year = {
+                    low: _movie.released.getFullYear(),
+                    high: 0
+                };
+            }
+
+            await GenericDatabaseCls.updateDocumentById({
                 id: id,
                 collectionName: collectionName,
                 keyName: keyName,
@@ -120,7 +129,7 @@ class MovieController {
             throw "Movie data & id is mandatory!";
         }
 
-        return updatedId;
+        return _movie;
     }
 
     static async getMoviesByText(_filter: Document): Promise<Document[]> {
@@ -235,7 +244,7 @@ class MovieController {
                 compoundQueries.push({
                     range: {
                         gte: _filter.releaseYear,
-                        lte: _filter.releaseYear, //no eq in range
+                        //  lte: _filter.releaseYear, //no eq in range
                         path: "year.low",
                     },
                 });

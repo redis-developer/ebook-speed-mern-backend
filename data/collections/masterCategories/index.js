@@ -31,8 +31,8 @@ const masterCategories = [
     },
     {
         category: "COUNTRY",
-        code: "SOUTH_AFRICA",
-        name: "South Africa"
+        code: "SOUTHAFRICA",
+        name: "SouthAfrica"
     },
     {
         category: "COUNTRY",
