@@ -113,7 +113,7 @@ router.post("/getMastersByCategory", async (req: Request, res: Response) => {
   };
 
   try {
-    result.data = await MasterController.getMastersByCategory(body);
+    result.data = await MasterController.getMastersByCategory(body, true);
   }
   catch (err) {
     const pureErr = getPureError(err);

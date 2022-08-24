@@ -27,6 +27,12 @@ import {
     set
 } from "lodash";
 
+import {
+    Client as RedisOmClient,
+    Entity as RedisEntity,
+    Schema as RedisSchema
+} from "redis-om";
+
 
 const lodashGroup = {
     merge,
@@ -47,7 +53,8 @@ export {
     lodashGroup,
     Seeder,
     path,
-    yup
+    yup,
+    RedisOmClient, RedisEntity, RedisSchema
 };
 
 export type {

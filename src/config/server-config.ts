@@ -26,8 +26,11 @@ const getServerConfig = () => {
             port: process.env.PORT || 3001,
         },
         mongoDb: {
-            connectionUrl: process.env.MONGODB_URL || `mongodb://localhost:27017/${dbName}`,
+            connectionUrl: process.env.MONGODB_URL || "",// || `mongodb://localhost:27017/${dbName}`
             dbName: dbName
+        },
+        redis: {
+            connectionUrl: process.env.REDIS_URL || ""
         },
         seeder: {
             collectionsPath: "./data/collections"

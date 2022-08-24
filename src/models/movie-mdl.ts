@@ -21,12 +21,12 @@ interface IMovie extends CstDocumentType {
     languages: string[] | null;
     countries: string[] | null;
 
-    imdbId?: string;
     imdbRating?: number;
-    imdbVotes?: IRangeNumber;
+    // imdbId?: string;
+    // imdbVotes?: IRangeNumber;
 
-    budget?: IRangeNumber;
-    revenue?: IRangeNumber;
+    // budget?: IRangeNumber;
+    // revenue?: IRangeNumber;
 
 }
 

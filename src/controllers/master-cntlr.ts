@@ -40,15 +40,16 @@ class MasterController {
 
         return compoundQueries;
     }
-    static async getMastersByCategory(_filter: Document): Promise<Document> {
-        const output: Document = {};
+    static async getMastersByCategory(_filter: Document, _isGroup: boolean): Promise<Document | Document[]> {
+        let output: Document | Document[];
 
         const collectionName = COLLECTIONS.MASTER_CATEGORIES.collectionName;
 
         if (_filter && Object.keys(_filter).length) {
             _filter = await MasterController.validateMastersByCategorySchema(_filter);
             const compoundQueries = MasterController.buildMastersByCategoryQuery(_filter);
-            const pipelineArr = [
+
+            const pipelineArr: Document[] = [
                 {
                     $search: {
                         index: COLLECTIONS.MASTER_CATEGORIES.Indexes.INDEX_MASTER_CATEGORIES,
@@ -61,29 +62,39 @@ class MasterController {
                     $project: {
                         category: 1,
                         code: 1,
-                        name: 1
+                        name: 1,
+                        _id: 1
                     }
-                },
-                {
+                }
+            ];
+
+            if (_isGroup) {
+                pipelineArr.push({
                     $group: {
                         _id: "$category",
                         value: {
                             $push: "$$ROOT"
                         }
                     }
-                }
-            ];
+                });
+            }
+
             const masterCategories = await GenericDatabaseCls.aggregate({
                 collectionName: collectionName,
                 pipelineArr: pipelineArr,
                 isInitializePipelineArr: false
             });
 
-            //convert array to key-value object
-            for (const masterCategory of masterCategories) {
-                output[masterCategory["_id"]] = masterCategory["value"];
+            if (_isGroup) {
+                output = {};
+                //convert array to key-value object
+                for (const masterCategory of masterCategories) {
+                    output[masterCategory["_id"]] = masterCategory["value"];
+                }
             }
-
+            else {
+                output = masterCategories;
+            }
         }
         else {
             throw "At least one key to filter is mandatory!";

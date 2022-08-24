@@ -23,6 +23,7 @@
     "lodash": "^4.17.21",
     "mongo-seeding": "^3.7.2",
     "mongodb": "^4.8.0",
+    "redis-om": "^0.3.6",
     "yup": "^0.32.11"
   },
   "devDependencies": {
