@@ -6,6 +6,7 @@ import { express } from "../dependencies";
 
 import { MovieController } from "./movie-cntlr";
 import { MasterController } from "./master-cntlr";
+import { MasterRedisController } from "./master-redis-cntlr";
 
 const router = express.Router();
 const DEFAULT_USER_ID = "usrNodeJS";
@@ -105,7 +106,7 @@ router.post("/getMoviesByBasicFilters", async (req: Request, res: Response) => {
   res.send(result);
 });
 //--------------------------------
-router.post("/getMastersByCategory", async (req: Request, res: Response) => {
+router.post("/getMasterCategories", async (req: Request, res: Response) => {
   const body = req.body;
   const result: IApiResponseBody = {
     data: null,
@@ -113,19 +114,38 @@ router.post("/getMastersByCategory", async (req: Request, res: Response) => {
   };
 
   try {
-    result.data = await MasterController.getMastersByCategory(body, true);
+    result.data = await MasterController.getMasterCategories(body, {});
   }
   catch (err) {
     const pureErr = getPureError(err);
     result.error = pureErr;
     res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
-    LoggerCls.error("/getMastersByCategory API failed !", pureErr);
+    LoggerCls.error("/getMasterCategories API failed !", pureErr);
   }
 
   res.send(result);
 });
 
 //--------------------------------
+router.post("/getMasterCategoriesFromRedis", async (req: Request, res: Response) => {
+  const body = req.body;
+  const result: IApiResponseBody = {
+    data: null,
+    error: null
+  };
+
+  try {
+    result.data = await MasterRedisController.getMasterCategoriesFromRedis(body);
+  }
+  catch (err) {
+    const pureErr = getPureError(err);
+    result.error = pureErr;
+    res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+    LoggerCls.error("/getMasterCategoriesFromRedis API failed !", pureErr);
+  }
+
+  res.send(result);
+});
 
 export {
   router

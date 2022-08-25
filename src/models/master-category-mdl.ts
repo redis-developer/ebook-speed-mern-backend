@@ -5,6 +5,7 @@ interface IMasterCategory extends CstDocumentType {
     category: string;
     code: string;
     name: string;
+    statusCode: number;
 }
 
 

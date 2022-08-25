@@ -9,7 +9,7 @@ import { GenericDatabaseCls } from "../utils/mongodb/generic-database";
 import { YupCls } from "../utils/yup";
 
 class MasterController {
-    static async validateMastersByCategorySchema(_filter: Document): Promise<Document> {
+    static async validateMastersCategoriesSchema(_filter: Document): Promise<Document> {
         const schema = yup.object().shape({
             categories: yup.array().of(yup.string()).min(1)
         });
@@ -19,7 +19,7 @@ class MasterController {
 
         return _filter;
     }
-    static buildMastersByCategoryQuery(_filter: Document): Document[] {
+    static buildMasterCategoriesQuery(_filter: Document): Document[] {
         const compoundQueries: Document[] = [{
             range: {
                 gt: 0,
@@ -40,14 +40,23 @@ class MasterController {
 
         return compoundQueries;
     }
-    static async getMastersByCategory(_filter: Document, _isGroup: boolean): Promise<Document | Document[]> {
-        let output: Document | Document[];
+    static async getMasterCategories(_filter: Document, _projection: Document): Promise<Document[]> {
+        let output: Document[];
 
         const collectionName = COLLECTIONS.MASTER_CATEGORIES.collectionName;
 
         if (_filter && Object.keys(_filter).length) {
-            _filter = await MasterController.validateMastersByCategorySchema(_filter);
-            const compoundQueries = MasterController.buildMastersByCategoryQuery(_filter);
+            _filter = await MasterController.validateMastersCategoriesSchema(_filter);
+            const compoundQueries = MasterController.buildMasterCategoriesQuery(_filter);
+
+            if (!_projection || Object.keys(_projection).length == 0) {
+                _projection = {
+                    category: 1,
+                    code: 1,
+                    name: 1,
+                    _id: 0
+                };
+            }
 
             const pipelineArr: Document[] = [
                 {
@@ -59,42 +68,15 @@ class MasterController {
                     },
                 },
                 {
-                    $project: {
-                        category: 1,
-                        code: 1,
-                        name: 1,
-                        _id: 1
-                    }
+                    $project: _projection
                 }
             ];
 
-            if (_isGroup) {
-                pipelineArr.push({
-                    $group: {
-                        _id: "$category",
-                        value: {
-                            $push: "$$ROOT"
-                        }
-                    }
-                });
-            }
-
-            const masterCategories = await GenericDatabaseCls.aggregate({
+            output = await GenericDatabaseCls.aggregate({
                 collectionName: collectionName,
                 pipelineArr: pipelineArr,
                 isInitializePipelineArr: false
             });
-
-            if (_isGroup) {
-                output = {};
-                //convert array to key-value object
-                for (const masterCategory of masterCategories) {
-                    output[masterCategory["_id"]] = masterCategory["value"];
-                }
-            }
-            else {
-                output = masterCategories;
-            }
         }
         else {
             throw "At least one key to filter is mandatory!";
