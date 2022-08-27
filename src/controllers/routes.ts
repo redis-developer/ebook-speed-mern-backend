@@ -7,13 +7,15 @@ import { express } from "../dependencies";
 import { MovieController } from "./movie-cntlr";
 import { MasterController } from "./master-cntlr";
 import { MasterRedisController } from "./master-redis-cntlr";
+import { RedisCacheAsideController } from "./redis-cache-aside-cntlr";
 
 const router = express.Router();
 const DEFAULT_USER_ID = "usrNodeJS";
 
 interface IApiResponseBody {
   data: unknown,
-  error: unknown
+  error: unknown,
+  isFromCache?: boolean
 }
 const getPureError = (err: unknown) => {
   return JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
@@ -70,11 +72,21 @@ router.post("/getMoviesByText", async (req: Request, res: Response) => {
   const body = req.body;
   const result: IApiResponseBody = {
     data: null,
-    error: null
+    error: null,
+    isFromCache: false
   };
 
   try {
-    result.data = await MovieController.getMoviesByText(body);
+    const cachedData = await RedisCacheAsideController.getDataFromRedis(body);
+    if (cachedData && cachedData.length) {
+      result.data = cachedData;
+      result.isFromCache = true;
+    }
+    else {
+      const dbData = await MovieController.getMoviesByText(body);
+      RedisCacheAsideController.setDataInRedis(body, dbData); //set async
+      result.data = dbData;
+    }
   }
   catch (err) {
     const pureErr = getPureError(err);

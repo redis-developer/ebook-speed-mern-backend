@@ -1,5 +1,4 @@
 import type {
-    CstObjectIdType,
     Document
 } from "../dependencies";
 

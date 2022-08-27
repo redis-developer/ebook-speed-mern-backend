@@ -33,6 +33,14 @@ import {
     Schema as RedisSchema
 } from "redis-om";
 
+import {
+    createClient as nodeRedisCreateClient,
+    //types
+    RedisClientType, RedisModules, RedisFunctions, RedisScripts
+} from "redis";
+
+
+import crypto from "crypto";
 
 const lodashGroup = {
     merge,
@@ -41,6 +49,7 @@ const lodashGroup = {
     set
 };
 
+type CstNodeRedisClient = RedisClientType<unknown & RedisModules, RedisFunctions, RedisScripts>
 
 type CstObjectIdType = ObjectId | string | number;
 
@@ -54,7 +63,9 @@ export {
     Seeder,
     path,
     yup,
-    RedisOmClient, RedisEntity, RedisSchema
+    RedisOmClient, RedisEntity, RedisSchema,
+    nodeRedisCreateClient,
+    crypto
 };
 
 export type {
@@ -64,6 +75,8 @@ export type {
 
     //express
     Express, Request, Response,
+
+    CstNodeRedisClient,
 
     //custom
     CstObjectIdType

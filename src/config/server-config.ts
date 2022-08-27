@@ -30,7 +30,8 @@ const getServerConfig = () => {
             dbName: dbName
         },
         redis: {
-            connectionUrl: process.env.REDIS_URL || ""
+            connectionUrl: process.env.REDIS_URL || "",
+            cacheAsideExpiryInSeconds: (1 * 30)   // 30 seconds;
         },
         seeder: {
             collectionsPath: "./data/collections"

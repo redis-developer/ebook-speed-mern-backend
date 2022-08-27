@@ -18,11 +18,13 @@
   "author": "PrasanKumar",
   "dependencies": {
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "lodash": "^4.17.21",
     "mongo-seeding": "^3.7.2",
     "mongodb": "^4.8.0",
+    "redis": "^4.3.0",
     "redis-om": "^0.3.6",
     "yup": "^0.32.11"
   },
