@@ -102,11 +102,21 @@ router.post("/getMoviesByBasicFilters", async (req: Request, res: Response) => {
   const body = req.body;
   const result: IApiResponseBody = {
     data: null,
-    error: null
+    error: null,
+    isFromCache: false
   };
 
   try {
-    result.data = await MovieController.getMoviesByBasicFilters(body);
+    const cachedData = await RedisCacheAsideController.getDataFromRedis(body);
+    if (cachedData && cachedData.length) {
+      result.data = cachedData;
+      result.isFromCache = true;
+    }
+    else {
+      const dbData = await MovieController.getMoviesByBasicFilters(body);
+      RedisCacheAsideController.setDataInRedis(body, dbData); //set async
+      result.data = dbData;
+    }
   }
   catch (err) {
     const pureErr = getPureError(err);
