@@ -8,6 +8,10 @@ class LoggerCls {
             if (!_details) {
                 _details = null;
             }
+            else {
+                _details = JSON.stringify(_details, null, 4);
+            }
+
             console.log(_message, { meta: _details });
             //other loggers can be added here
         }

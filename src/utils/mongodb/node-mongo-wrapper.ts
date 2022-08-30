@@ -93,6 +93,8 @@ class NodeMongoWrapperCls {
 
                 this.getConnection().
                     then((db: Db) => {
+                        const startNow = performance.now();
+
                         db.collection(_collectionName)
                             .find(_filter)
                             .collation(collation) // added to sort case insensitively(English Alphabets)
@@ -101,6 +103,16 @@ class NodeMongoWrapperCls {
                             .project(_projection)
                             .toArray()
                             .then((data) => {
+
+                                //--perf--
+                                const endNow = performance.now();
+                                const logData = {
+                                    collectionName: _collectionName,
+                                    filter: _filter,
+                                    stats: (endNow - startNow)
+                                };
+                                LoggerCls.info("find perf-", logData);
+                                //--perf ends--
                                 resolve(data);
                             })
                             .catch((err) => {
@@ -376,10 +388,21 @@ class NodeMongoWrapperCls {
             if (_collectionName && _pipelineArr instanceof Array && _pipelineArr.length) {
                 this.getConnection()
                     .then((db: Db) => {
+                        const startNow = performance.now();
                         db.collection(_collectionName)
                             .aggregate(_pipelineArr)
                             .toArray()
                             .then((data) => {
+                                //--perf--
+                                const endNow = performance.now();
+                                const logData = {
+                                    collectionName: _collectionName,
+                                    filter: _pipelineArr,
+                                    stats: (endNow - startNow)
+                                };
+                                LoggerCls.info("aggregate perf-", logData);
+                                //--perf ends--
+
                                 resolve(data);
                             })
                             .catch((err) => {

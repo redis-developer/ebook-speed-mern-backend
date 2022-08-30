@@ -2,6 +2,8 @@ import type {
     Document
 } from "../dependencies";
 
+import { LoggerCls } from "../utils/logger";
+
 import { MasterController } from "./master-cntlr";
 import * as MasterCategoryRepo from "../models/redis/master-category-repo";
 
@@ -68,10 +70,20 @@ class MasterRedisController {
                     .and("categoryTag").containOneOf(..._filter.categories);
 
                 console.log(queryBuilder.query);
-
+                const startNow = performance.now();
                 const innerPromObj = queryBuilder.return.all();
                 innerPromObj
                     .then((dataArr) => {
+                        //--perf--
+                        const endNow = performance.now();
+                        const logData = {
+                            collectionName: "MasterCategoryRepo",
+                            filter: queryBuilder.query,
+                            stats: (endNow - startNow)
+                        };
+                        LoggerCls.info("RedisMasters perf-", logData);
+                        //--perf ends--
+
                         const newDataArr = dataArr.map((elm) => {
                             return {
                                 category: elm.category,
