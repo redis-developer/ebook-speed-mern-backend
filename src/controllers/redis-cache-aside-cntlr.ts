@@ -4,7 +4,7 @@ import type {
 
 import { getServerConfig } from "../config/server-config";
 import { getRedisOm } from "../utils/redis/redis-om-wrapper";
-
+import { LoggerCls } from "../utils/logger";
 import { CryptoCls } from "../utils/crypto";
 
 
@@ -20,9 +20,9 @@ class RedisCacheAsideController {
         return retKey;
     }
 
-    static setDataInRedis(_filter: Document, _data: Document[]): Promise<string> {
+    static setDataInRedis(_filter: Document, _data: Document[], isErrorAsync?: boolean): Promise<string | void> {
 
-        const promObj: Promise<string> = new Promise((resolve, reject) => {
+        let promObj: Promise<string | void> = new Promise((resolve, reject) => {
             const redisOmWrapperInst = getRedisOm();
             const SERVER_CONFIG = getServerConfig();
 
@@ -47,6 +47,12 @@ class RedisCacheAsideController {
                 reject("Input params failed - RedisCacheAsideController.addDataToRedis()!");
             }
         });
+
+        if (isErrorAsync) {
+            promObj = promObj.catch((err) => {
+                LoggerCls.error(err);
+            });
+        }
         return promObj;
     }
 

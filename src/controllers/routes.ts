@@ -114,7 +114,7 @@ router.post("/getMoviesByBasicFilters", async (req: Request, res: Response) => {
     }
     else {
       const dbData = await MovieController.getMoviesByBasicFilters(body);
-      RedisCacheAsideController.setDataInRedis(body, dbData); //set async
+      RedisCacheAsideController.setDataInRedis(body, dbData, true); //set async
       result.data = dbData;
     }
   }
