@@ -6,7 +6,7 @@ interface IRangeNumber {
 }
 
 interface IMovie extends CstDocumentType {
-    movieId: string;
+    movieId?: string;
 
     title: string;
     tagline: string;
