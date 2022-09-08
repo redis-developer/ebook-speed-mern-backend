@@ -4,7 +4,7 @@ import { ObjectId } from "../dependencies";
 import * as MovieRepo from "../models/redis/movie-repo";
 
 
-class RedisWBController {
+class RedisWriteBehindController {
     static async insertMovieToRedis(_movie: IMovie, _userId: string): Promise<IMovie> {
         const repository = MovieRepo.getRepository();
 
@@ -33,5 +33,5 @@ class RedisWBController {
 }
 
 export {
-    RedisWBController
+    RedisWriteBehindController
 };

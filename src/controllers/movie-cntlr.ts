@@ -8,7 +8,8 @@ import { COLLECTIONS } from "../config/server-config";
 
 import { GenericDatabaseCls } from "../utils/mongodb/generic-database";
 import { YupCls } from "../utils/yup";
-import { RedisWBController } from "./redis-wb-cntlr";
+import { RedisWriteBehindController } from "./redis-write-behind-cntlr";
+import { getServerConfig } from "../config/server-config";
 
 class MovieController {
 
@@ -50,7 +51,7 @@ class MovieController {
             }
 
             //uncomment below insertMovieToRedis() for write behind pattern 
-            //insertedDoc = await RedisWBController.insertMovieToRedis(_movie, _userId);
+            //insertedDoc = await RedisWriteBehindController.insertMovieToRedis(_movie, _userId);
 
             //comment below insertDocument for write behind pattern  
             insertedDoc = await GenericDatabaseCls.insertDocument({
@@ -134,37 +135,49 @@ class MovieController {
         return _movie;
     }
 
+
+    static buildMoviesByTextAtlasQuery(_filter: Document): Document {
+        let searchText = "";
+
+        if (_filter && _filter.searchText) {
+            searchText = _filter.searchText;
+        }
+        const atlasSearchQuery = {
+            $search: {
+                index: COLLECTIONS.MOVIES.Indexes.INDEX_MOVIES_QUICK_TEXT_SEARCH,
+                compound: {
+                    must: [
+                        {
+                            range: {
+                                gt: 0,
+                                path: "statusCode",
+                            },
+                        },
+                        {
+                            text: {
+                                query: searchText,
+                                path: ["title", "tagline", "plot"],
+                            },
+                        }
+                    ],
+                },
+            }
+        };
+
+        return atlasSearchQuery;
+    }
     static async getMoviesByText(_filter: Document): Promise<Document[]> {
         let movieList: Document[] = [];
         const collectionName = COLLECTIONS.MOVIES.collectionName;
+        const SERVER_CONFIG = getServerConfig();
 
-        let pipelineArr: Document[] = [];
+        const pipelineArr: Document[] = [];
         let isInitializePipelineArr = false;
         if (_filter && _filter.searchText) {
-            pipelineArr = [
-                {
-                    $search: {
-                        index: COLLECTIONS.MOVIES.Indexes.INDEX_MOVIES_QUICK_TEXT_SEARCH,
-                        compound: {
-                            must: [
-                                {
-                                    range: {
-                                        gt: 0,
-                                        path: "statusCode",
-                                    },
-                                },
-                                {
-                                    text: {
-                                        query: _filter.searchText,
-                                        path: ["title", "tagline", "plot"],
-                                    },
-                                }
-                            ],
-                        },
-                    }
-                }
-
-            ];
+            if (SERVER_CONFIG.mongoDb.useAtlasIndexSearch) {
+                const atlasSearchQuery = MovieController.buildMoviesByTextAtlasQuery(_filter);
+                pipelineArr.push(atlasSearchQuery);
+            }
         }
         else {
             isInitializePipelineArr = true;
@@ -213,7 +226,7 @@ class MovieController {
 
         return _filter;
     }
-    static buildBasicFiltersQuery(_filter: Document): Document[] {
+    static buildBasicFiltersAtlasQuery(_filter: Document): Document {
         const compoundQueries: Document[] = [{
             range: {
                 gt: 0,
@@ -262,41 +275,48 @@ class MovieController {
             }
         }
 
-        return compoundQueries;
+        const atlasSearchQuery = {
+            $search: {
+                index: COLLECTIONS.MOVIES.Indexes.INDEX_MOVIES_BASIC_SEARCH,
+                compound: {
+                    must: compoundQueries,
+                },
+            },
+        };
+
+        return atlasSearchQuery;
     }
     static async getMoviesByBasicFilters(_filter: Document): Promise<Document[]> {
         let movieList: Document[] = [];
         const collectionName = COLLECTIONS.MOVIES.collectionName;
+        const SERVER_CONFIG = getServerConfig();
 
         if (_filter && Object.keys(_filter).length) {
             _filter = await MovieController.validateBasicFiltersSchema(_filter);
-            const compoundQueries = MovieController.buildBasicFiltersQuery(_filter);
-            const pipelineArr = [
-                {
-                    $search: {
-                        index: COLLECTIONS.MOVIES.Indexes.INDEX_MOVIES_BASIC_SEARCH,
-                        compound: {
-                            must: compoundQueries,
-                        },
-                    },
-                },
-                {
-                    $project: {
-                        movieId: 1,
-                        title: 1,
-                        tagline: 1,
-                        plot: 1,
-                        url: 1,
-                        poster: 1,
-                        released: 1,
-                        "year.low": 1,
-                        duration: 1,
-                        languages: 1,
-                        countries: 1,
-                        imdbRating: 1
-                    }
+
+            const pipelineArr: Document[] = [];
+            if (SERVER_CONFIG.mongoDb.useAtlasIndexSearch) {
+                const atlasSearchQuery = MovieController.buildBasicFiltersAtlasQuery(_filter);
+                pipelineArr.push(atlasSearchQuery);
+            }
+
+            pipelineArr.push({
+                $project: {
+                    movieId: 1,
+                    title: 1,
+                    tagline: 1,
+                    plot: 1,
+                    url: 1,
+                    poster: 1,
+                    released: 1,
+                    "year.low": 1,
+                    duration: 1,
+                    languages: 1,
+                    countries: 1,
+                    imdbRating: 1
                 }
-            ];
+            });
+
             movieList = await GenericDatabaseCls.aggregate({
                 collectionName: collectionName,
                 pipelineArr: pipelineArr,

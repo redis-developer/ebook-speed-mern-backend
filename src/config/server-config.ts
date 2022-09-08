@@ -27,7 +27,10 @@ const getServerConfig = () => {
         },
         mongoDb: {
             connectionUrl: process.env.MONGODB_URL || "",// || `mongodb://localhost:27017/${dbName}`
-            dbName: dbName
+            dbName: dbName,
+            //make useAtlasIndexSearch = true, if connectionUrl is of Atlas & indexing (docs/indexing/mongodb-atlas.md) is done
+            useAtlasIndexSearch: true
+            //Note: RedisGears is not supported yet on MongoDBAtlas (so write behind pattern will not work for Atlas)
         },
         redis: {
             connectionUrl: process.env.REDIS_URL || "",
