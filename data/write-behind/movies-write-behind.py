@@ -5,9 +5,10 @@ from rgsync import RGJSONWriteBehind, RGJSONWriteThrough
 from rgsync.Connectors import MongoConnector, MongoConnection
 
 # change mongodb connection
-connection = MongoConnection('ADMIN_USER',
-                             'ADMIN_PASSWORD',
-                             'ADMIN_HOST')
+# MongoConnection(user, password, host, authSource (optional), fullConnectionUrl (optional) )
+# connection = MongoConnection('ADMIN_USER','ADMIN_PASSWORD','ADMIN_HOST', "admin")
+connection = MongoConnection("", "", "", "", "MONGODB_CONNECTION_URL")
+
 # change MongoDB database
 db = 'dbSpeedMernDemo'
 
