@@ -33,24 +33,18 @@ const runWriteBehindRecipe = async () => {
     if (client) {
         await client.connect();
 
-        client.sendCommand(
-            [
-                "RG.PYEXECUTE",
-                writeBehindCode,
-                "REQUIREMENTS",
-                ...requirements
-            ]
-        )
-            .then(() => {
-                console.log("RedisGears WriteBehind set up completed.");
-                process.exit();
+        const params = ["RG.PYEXECUTE", writeBehindCode,
+            "REQUIREMENTS", ...requirements];
+        try {
+            await client.sendCommand(params);
+            console.log("RedisGears WriteBehind set up completed.");
+        }
+        catch (err) {
+            console.error("RedisGears WriteBehind setup failed !");
+            console.error(JSON.stringify(err, Object.getOwnPropertyNames(err), 4));
+        }
+        process.exit();
 
-            })
-            .catch((err) => {
-                console.error("RedisGears WriteBehind setup failed !");
-                console.error(JSON.stringify(err, Object.getOwnPropertyNames(err), 4));
-                process.exit(1);
-            });
     }
 
 };
