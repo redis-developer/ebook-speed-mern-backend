@@ -6,14 +6,17 @@
 
 const fs = require("fs");
 const redis = require("redis");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 //-----CONNECTION -------
-const redisConnectionUrl = "redis://10.0.1.1:6379";
+const redisConnectionUrl = process.env.REDIS_URL || "redis://10.0.1.1:6379";
 const mongoDB = {
     // adminUser: "usrAdmin",
     // adminPassword: "passwordAdmin",
     // host: "10.10.20.2:27017/admin",
-    connectionUrl: "mongodb://usrAdmin:passwordAdmin@10.10.20.2:27017/admin"
+    connectionUrl: process.env.MONGODB_URL || "mongodb://usrAdmin:passwordAdmin@10.10.20.2:27017/admin"
 };
 //----- CONNECTION ENDS -------
 
