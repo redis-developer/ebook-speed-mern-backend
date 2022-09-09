@@ -16,7 +16,7 @@ const mongoDB = {
     // adminUser: "usrAdmin",
     // adminPassword: "passwordAdmin",
     // host: "10.10.20.2:27017/admin",
-    connectionUrl: process.env.MONGODB_URL || "mongodb://usrAdmin:passwordAdmin@10.10.20.2:27017/admin"
+    connectionUrl: process.env.MONGODB_URL || "mongodb://usrAdmin:passwordAdmin@10.10.20.2:27017/dbSpeedMernDemo?authSource=admin"
 };
 //----- CONNECTION ENDS -------
 
