@@ -136,6 +136,36 @@ class MovieController {
     }
 
 
+    static buildMoviesByTextQuery(_filter: Document): Document {
+        const searchQuery: Document = {
+            $match: {
+                statusCode: {
+                    $gt: 0
+                }
+            }
+        };
+
+        if (_filter && _filter.searchText) {
+            const regex = new RegExp(_filter.searchText, "i");
+            searchQuery.$match = {
+                $or: [{
+                    title: {
+                        $regex: regex
+                    }
+                }, {
+                    tagline: {
+                        $regex: regex
+                    }
+                }, {
+                    plot: {
+                        $regex: regex
+                    }
+                }]
+            };
+        }
+
+        return searchQuery;
+    }
     static buildMoviesByTextAtlasQuery(_filter: Document): Document {
         let searchText = "";
 
@@ -177,6 +207,10 @@ class MovieController {
             if (SERVER_CONFIG.mongoDb.useAtlasIndexSearch) {
                 const atlasSearchQuery = MovieController.buildMoviesByTextAtlasQuery(_filter);
                 pipelineArr.push(atlasSearchQuery);
+            }
+            else {
+                const searchQuery = MovieController.buildMoviesByTextQuery(_filter);
+                pipelineArr.push(searchQuery);
             }
         }
         else {
@@ -225,6 +259,51 @@ class MovieController {
         _filter = await YupCls.validateSchema(_filter, schema);
 
         return _filter;
+    }
+    static buildBasicFiltersQuery(_filter: Document): Document {
+        const searchQuery: Document = {
+            $match: {
+                statusCode: {
+                    $gt: 0
+                }
+            }
+        };
+
+        if (_filter) {
+
+            if (_filter.imdbRating >= 0) {
+                searchQuery.$match.imdbRating = {
+                    $gte: _filter.imdbRating
+                };
+            }
+
+
+            if (_filter.countries && _filter.countries.length) {
+                const newCountries = _filter.countries.map((country: string) => {
+                    const countryRegex = new RegExp(country, "i");
+                    return countryRegex;
+                });
+
+                searchQuery.$match.countries = {
+                    $in: newCountries
+                };
+            }
+
+            if (_filter.releaseYear >= 0) {
+                searchQuery.$match["year.low"] = {
+                    $gte: _filter.releaseYear
+                };
+            }
+
+            if (_filter.title) {
+                const regex = new RegExp(_filter.title, "i");
+                searchQuery.$match.title = {
+                    $regex: regex
+                };
+            }
+        }
+
+        return searchQuery;
     }
     static buildBasicFiltersAtlasQuery(_filter: Document): Document {
         const compoundQueries: Document[] = [{
@@ -298,6 +377,10 @@ class MovieController {
             if (SERVER_CONFIG.mongoDb.useAtlasIndexSearch) {
                 const atlasSearchQuery = MovieController.buildBasicFiltersAtlasQuery(_filter);
                 pipelineArr.push(atlasSearchQuery);
+            }
+            else {
+                const searchQuery = MovieController.buildBasicFiltersQuery(_filter);
+                pipelineArr.push(searchQuery);
             }
 
             pipelineArr.push({

@@ -21,6 +21,22 @@ class MasterController {
 
         return _filter;
     }
+    static buildMasterCategoriesQuery(_filter: Document): Document {
+        const searchQuery: Document = {
+            $match: {
+                statusCode: {
+                    $gt: 0
+                }
+            }
+        };
+        if (_filter && _filter.categories && _filter.categories.length) {
+            searchQuery.$match.category = {
+                $in: _filter.categories
+            };
+        }
+
+        return searchQuery;
+    }
     static buildMasterCategoriesAtlasQuery(_filter: Document): Document {
         const compoundQueries: Document[] = [{
             range: {
@@ -75,6 +91,10 @@ class MasterController {
             if (SERVER_CONFIG.mongoDb.useAtlasIndexSearch) {
                 const atlasSearchQuery = MasterController.buildMasterCategoriesAtlasQuery(_filter);
                 pipelineArr.push(atlasSearchQuery);
+            }
+            else {
+                const searchQuery = MasterController.buildMasterCategoriesQuery(_filter);
+                pipelineArr.push(searchQuery);
             }
 
             pipelineArr.push({
