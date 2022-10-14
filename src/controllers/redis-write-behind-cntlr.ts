@@ -19,9 +19,6 @@ class RedisWriteBehindController {
             _movie.statusCode = DB_ROW_STATUS.ACTIVE;
 
             const entity = repository.createEntity(_movie);
-            //@ts-ignore
-            entity.entityId = _movie.movieId; //using same mongodb key as redis key
-
             await repository.save(entity);
         }
         else {

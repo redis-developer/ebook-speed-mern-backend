@@ -11,7 +11,7 @@ Please create **.env file** at root and add appropriate "redis" and "mongodb" se
 ```js
 //consider sample
 PORT=3001
-MONGODB_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/dbSpeedMernDemo?retryWrites=true&w=majority
+MONGODB_URL=mongodb://usrAdmin:password@10.1000.10.21:27017/dbSpeedMernDemo?authSource=admin
 REDIS_URL=127.0.0.1:6379
 ```
 
@@ -27,11 +27,7 @@ npm install
 npm run data
 ```
 
-### (4) Index data in MongoDB Atlas
-
-- [Refer](./docs/indexing/mongodb-atlas.md)
-
-### (5) Run project locally
+### (4) Run project locally
 
 ```sh
 npm start
