@@ -70,18 +70,18 @@ class MasterRedisController {
                     .and("categoryTag").containOneOf(..._filter.categories);
 
                 console.log(queryBuilder.query);
-                const startNow = performance.now();
+                // const startNow = performance.now();
                 const innerPromObj = queryBuilder.return.all();
                 innerPromObj
                     .then((dataArr) => {
                         //--perf--
-                        const endNow = performance.now();
-                        const logData = {
-                            collectionName: "MasterCategoryRepo",
-                            filter: queryBuilder.query,
-                            stats: (endNow - startNow)
-                        };
-                        LoggerCls.info("RedisMasters perf-", logData);
+                        // const endNow = performance.now();
+                        // const logData = {
+                        //     collectionName: "MasterCategoryRepo",
+                        //     filter: queryBuilder.query,
+                        //     stats: (endNow - startNow)
+                        // };
+                        // LoggerCls.info("RedisMasters perf-", logData);
                         //--perf ends--
 
                         const newDataArr = dataArr.map((elm) => {

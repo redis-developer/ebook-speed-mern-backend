@@ -4,11 +4,10 @@ class YupCls {
 
         if (_data && _schema) {
             //@ts-ignore 
-            _data = await _schema
-                .validate(_data, { //validate 
-                    strict: false,
-                    stripUnknown: true //remove unknown properties
-                })
+            _data = await _schema.validate(_data, { //validate 
+                strict: false,
+                stripUnknown: true //remove unknown properties
+            })
                 //@ts-ignore 
                 .catch((err) => {
                     if (err) {

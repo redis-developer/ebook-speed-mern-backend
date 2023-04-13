@@ -24,8 +24,13 @@ const setUpRedis = () => {
             return createAllRedisIndexes();
         })
         .then(() => {
+            console.log("Redis Indexes created !");
             //Master data lookup pattern (preload data in cache)
             return MasterRedisController.insertMasterCategoriesToRedis();
+        })
+        .catch((err) => {
+            console.log(err);
+            throw err;
         });
 
     return redisPromObj2;

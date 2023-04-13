@@ -11,12 +11,12 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 //-----CONNECTION -------
-const redisConnectionUrl = process.env.REDIS_URL || "redis://10.0.1.1:6379";
+const redisConnectionUrl = process.env.REDIS_URL || "redis://localhost:6379";
 const mongoDB = {
-    // adminUser: "usrAdmin",
-    // adminPassword: "passwordAdmin",
-    // host: "10.10.20.2:27017/admin",
-    connectionUrl: process.env.MONGODB_URL || "mongodb://usrAdmin:passwordAdmin@10.10.20.2:27017/dbSpeedMernDemo?authSource=admin"
+    // adminUser: "",
+    // adminPassword: "",
+    // host: "",
+    connectionUrl: process.env.MONGODB_URL || "mongodb://localhost:27017/dbSpeedMernDemo"
 };
 //----- CONNECTION ENDS -------
 
@@ -40,13 +40,15 @@ const runWriteBehindRecipe = async () => {
             "REQUIREMENTS", ...requirements];
         try {
             await client.sendCommand(params);
-            console.log("RedisGears WriteBehind set up completed.");
         }
         catch (err) {
             console.error("RedisGears WriteBehind setup failed !");
             console.error(JSON.stringify(err, Object.getOwnPropertyNames(err), 4));
         }
-        process.exit();
+        await client.disconnect();
+        console.log("RedisGears WriteBehind set up completed.");
+
+        //process.exit();
 
     }
 

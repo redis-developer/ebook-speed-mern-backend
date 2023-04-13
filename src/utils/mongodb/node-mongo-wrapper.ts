@@ -93,7 +93,7 @@ class NodeMongoWrapperCls {
 
                 this.getConnection().
                     then((db: Db) => {
-                        const startNow = performance.now();
+                        //const startNow = performance.now();
 
                         db.collection(_collectionName)
                             .find(_filter)
@@ -105,13 +105,13 @@ class NodeMongoWrapperCls {
                             .then((data) => {
 
                                 //--perf--
-                                const endNow = performance.now();
-                                const logData = {
-                                    collectionName: _collectionName,
-                                    filter: _filter,
-                                    stats: (endNow - startNow)
-                                };
-                                LoggerCls.info("find perf-", logData);
+                                // const endNow = performance.now();
+                                // const logData = {
+                                //     collectionName: _collectionName,
+                                //     filter: _filter,
+                                //     stats: (endNow - startNow)
+                                // };
+                                // LoggerCls.info("find perf-", logData);
                                 //--perf ends--
                                 resolve(data);
                             })
@@ -388,19 +388,19 @@ class NodeMongoWrapperCls {
             if (_collectionName && _pipelineArr instanceof Array && _pipelineArr.length) {
                 this.getConnection()
                     .then((db: Db) => {
-                        const startNow = performance.now();
+                        //const startNow = performance.now();
                         db.collection(_collectionName)
                             .aggregate(_pipelineArr)
                             .toArray()
                             .then((data) => {
                                 //--perf--
-                                const endNow = performance.now();
-                                const logData = {
-                                    collectionName: _collectionName,
-                                    filter: _pipelineArr,
-                                    stats: (endNow - startNow)
-                                };
-                                LoggerCls.info("aggregate perf-", logData);
+                                // const endNow = performance.now();
+                                // const logData = {
+                                //     collectionName: _collectionName,
+                                //     filter: _pipelineArr,
+                                //     stats: (endNow - startNow)
+                                // };
+                                // LoggerCls.info("aggregate perf-", logData);
                                 //--perf ends--
 
                                 resolve(data);

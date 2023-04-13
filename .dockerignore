@@ -1,0 +1,14 @@
+.git
+.env.local
+.env-cloud
+.vscode
+
+node_modules
+dist
+dockerfile-server
+
+*-lock.json
+
+# System files
+.DS_Store
+Thumbs.db

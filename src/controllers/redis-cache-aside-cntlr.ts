@@ -62,18 +62,18 @@ class RedisCacheAsideController {
             if (_filter && redisOmWrapperInst
                 && redisOmWrapperInst.nodeRedisClient) {
                 const hashKey = RedisCacheAsideController.getHashKey(_filter);
-                const startNow = performance.now();
+                //const startNow = performance.now();
                 redisOmWrapperInst.nodeRedisClient
                     .get(hashKey)
                     .then((data) => {
                         //--perf--
-                        const endNow = performance.now();
-                        const logData = {
-                            collectionName: "CACHE_ASIDE_*",
-                            filter: _filter,
-                            stats: (endNow - startNow)
-                        };
-                        LoggerCls.info("RedisCacheAside perf-", logData);
+                        // const endNow = performance.now();
+                        // const logData = {
+                        //     collectionName: "CACHE_ASIDE_*",
+                        //     filter: _filter,
+                        //     stats: (endNow - startNow)
+                        // };
+                        // LoggerCls.info("RedisCacheAside perf-", logData);
                         //--perf ends--
 
                         const docArr = data ? JSON.parse(data) : [];

@@ -6,11 +6,12 @@
   "scripts": {
     "es-linting": "eslint \"**/*.{js,ts}\" --quiet --fix",
     "lint": "tsc --noEmit && npm run es-linting",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc && npm run lint",
-    "start": "npm run build && concurrently -k \"npx tsc --watch\" \"nodemon  dist/src/server.js\"",
-    "data": "npm run build && node dist/data/main.js",
-    "write-behind": "node data/write-behind/wb-main.js"
+    "start-main": "concurrently -k \"npx tsc --watch\" \"nodemon  dist/src/server.js\"",
+    "data": "node dist/data/main.js",
+    "write-behind": "node data/write-behind/wb-main.js",
+    "start": "npm run build && npm run start-main",
+    "docker-start": "npm run build && npm run data && npm run write-behind && npm run start-main"
   },
   "keywords": [
     "Redis",

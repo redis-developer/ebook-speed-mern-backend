@@ -27,6 +27,8 @@ class RedisOmWrapperCls {
                     })
                     .then((client) => {
                         this.client = client;
+                        LoggerCls.info("Connected successfully to  redis !");
+
                         resolve(client);
                     })
                     .catch((err) => {

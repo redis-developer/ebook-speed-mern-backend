@@ -2,35 +2,37 @@
 
 Speed your MERN app by REDIS
 
-## Project setup
+## Manage application
 
-### (1) Config
-
-Please create **.env file** at root and add appropriate "redis" and "mongodb" server connection string details
-
-```js
-//consider sample
-PORT=3001
-MONGODB_URL=mongodb://usrAdmin:password@10.1000.10.21:27017/dbSpeedMernDemo?authSource=admin
-REDIS_URL=127.0.0.1:6379
-```
-
-### (2) Install packages
+### Start application
 
 ```sh
-npm install
+# to start docker app
+docker compose up -d
 ```
 
-### (3) Seed movies data to MongoDB
+Note:
+
+- Can view MongoDB data in MongoDB compass at URI "mongodb://localhost:27017"
+- Can view Redis data in [RedisInsight](https://redis.com/redis-enterprise/redis-insight/) at localhost with port 6379
+- Can change above connection details or ports by the environment variables in .env file
+
+### Other commands
 
 ```sh
-npm run data
-```
+# to stop docker app
+docker compose down
 
-### (4) Run project locally
+# to stop & also delete volumes (mongodb & redis data)
+docker compose down -v
 
-```sh
-npm start
+# to rebuild all images & start
+docker compose  up -d --build
+
+# to rebuild image of specific service (after any code changes)
+docker-compose build --no-cache <service_name>
+# example
+docker-compose build --no-cache movie_backend_service
 ```
 
 ## Documentation

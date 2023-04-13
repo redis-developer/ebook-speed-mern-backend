@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  redis_server:
+    container_name: redis_server
+    image: 'redislabs/redismod'
+    volumes:
+      - redis_data:/data
+    ports: # enable to visualize data in redis insight
+      - '${REDIS_INSIGHT_PORT}:6379'
+
+  mongodb_server:
+    container_name: mongodb_server
+    image: 'mongo'
+    volumes:
+      - mongodb_data:/data/db
+    ports: # enable to visualize data in mongodb compass
+      - '${MONGODB_COMPASS_PORT}:27017'
+
+  movie_backend_service:
+    container_name: movie_backend_service
+    build: ./
+    env_file:
+      - ./.env
+    depends_on:
+      - redis_server
+      - mongodb_server
+    ports: # enable port for frontend app to connect
+      - '${PORT}:${PORT}'
+
+volumes:
+  redis_data:
+  mongodb_data:
