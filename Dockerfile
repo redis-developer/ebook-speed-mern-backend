@@ -10,6 +10,10 @@ COPY . .
 
 EXPOSE 3001
 
+# WriteBehind example
 CMD [ "npm","run", "docker-start" ]
+
+# WriteThrough example
+# CMD [ "npm","run", "docker-wt-start" ]
 
 
