@@ -51,15 +51,15 @@ class MovieController {
             }
 
             //uncomment below insertMovieToRedis() for write behind pattern 
-            //insertedDoc = await RedisWriteBehindController.insertMovieToRedis(_movie, _userId);
+            insertedDoc = await RedisWriteBehindController.insertMovieToRedis(_movie, _userId);
 
             //comment below insertDocument for write behind pattern  
-            insertedDoc = await GenericDatabaseCls.insertDocument({
-                collectionName: collectionName,
-                keyName: keyName,
-                document: _movie,
-                createdBy: _userId
-            });
+            // insertedDoc = await GenericDatabaseCls.insertDocument({
+            //     collectionName: collectionName,
+            //     keyName: keyName,
+            //     document: _movie,
+            //     createdBy: _userId
+            // });
         }
         else {
             throw "Movie data is mandatory!";
