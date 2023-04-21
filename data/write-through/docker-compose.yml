@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  redis:
+    container_name: redis
+    image: 'redislabs/redismod:latest'
+    ports:
+      - 6379:6379
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: example
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

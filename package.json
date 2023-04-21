@@ -10,10 +10,8 @@
     "start-main": "concurrently -k \"npx tsc --watch\" \"nodemon  dist/src/server.js\"",
     "data": "node dist/data/main.js",
     "write-behind": "node data/write-behind/wb-main.js",
-    "write-through": "node data/write-through/wt-main.js",
     "start": "npm run build && npm run start-main",
-    "docker-start": "npm run build && npm run data && npm run write-behind && npm run start-main",
-    "docker-wt-start": "npm run build && npm run data && npm run write-through && npm run start-main"
+    "docker-start": "npm run build && npm run data && npm run write-behind && npm run start-main"
   },
   "keywords": [
     "Redis",

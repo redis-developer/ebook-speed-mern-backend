@@ -17,20 +17,10 @@ Note:
 - Can view Redis data in [RedisInsight](https://redis.com/redis-enterprise/redis-insight/) at localhost with port 6379
 - Can change above connection details or ports by the environment variables in .env file
 
-- By default WriteBehind example is enabled in `Dockerfile`, you can comment 'WriteBehind' section & uncomment 'WriteThrough' section if desired to change the write pattern
-
-```Dockerfile
-# WriteBehind example
-CMD [ "npm","run", "docker-start" ]
-
-# WriteThrough example
-# CMD [ "npm","run", "docker-wt-start" ]
-```
-
 When starting the backend app, it takes few minutes to perform following
 
 - Seed the movie data to MongoDB
-- Setup "WriteBehind/WriteThrough strategy" for syncing between Redis and MongoDB
+- Setup "WriteBehind strategy" for syncing between Redis and MongoDB
 - Start the API server
 
 ### Other commands

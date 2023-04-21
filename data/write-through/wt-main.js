@@ -7,30 +7,17 @@
 const fs = require("fs");
 const redis = require("redis");
 const dotenv = require("dotenv");
+const redisConnectionUrl = process.env.REDIS_URL || "redis://localhost:6379";
 
 dotenv.config();
 
-//-----CONNECTION -------
-const redisConnectionUrl = process.env.REDIS_URL || "redis://localhost:6379";
-const mongoDB = {
-    // adminUser: "",
-    // adminPassword: "",
-    // host: "",
-    connectionUrl: process.env.MONGODB_URL || "mongodb://localhost:27017/dbSpeedMernDemo"
-};
-//----- CONNECTION ENDS -------
 
-const pythonFilePath = __dirname + "/movies-write-through.py";
+const pythonFilePath = __dirname + "/write-through.py";
 
 const runWriteThroughRecipe = async () => {
-    const requirements = ["rgsync", "pymongo==3.12.0"];
+    const requirements = ["rgsync", "psycopg2-binary", "cryptography"];
     const writeThroughCode = fs
-        .readFileSync(pythonFilePath)
-        .toString()
-        // .replace("ADMIN_USER", mongoDB.adminUser)
-        // .replace("ADMIN_PASSWORD", mongoDB.adminPassword)
-        // .replace("ADMIN_HOST", mongoDB.host)
-        .replace("MONGODB_CONNECTION_URL", mongoDB.connectionUrl);
+        .readFileSync(pythonFilePath);
 
     const client = redis.createClient({ url: redisConnectionUrl });
     if (client) {
